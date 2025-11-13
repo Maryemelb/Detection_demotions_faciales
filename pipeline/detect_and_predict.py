@@ -85,47 +85,52 @@ def detect_face(img):
      #(x + w, y + h) = (50+80, 100+80) = (130, 180) → bottom-right corner
      #(255, 255, 255) → white color
      #10 → thickness of the rectangle
+     emotion=[]
+     score=[]
      model= tf.keras.models.load_model('best_model.keras')
      for (x,y, w, h) in face_rectangle:
+          
           cv2.rectangle(img, (x,y), (x + w, y + h), (0,128,0),10)
           image_extraction= gracy_img[y:y+h, x: x+w] #y to y+h / gracy_img(height, width)
-          resize_extracted_face= cv2.resize(image_extraction, (48,48), interpolation= cv2.INTER_LINEAR)
+          resize_extracted_face= cv2.resize(image_extraction, (48,48))
           resheapee= np.reshape(resize_extracted_face,(1,48,48,1)) #only one img
           #32 grayscale images of 48×48 pixels
           print("test")
           predict_val= model.predict(resheapee)
+          sc= np.max(predict_val)
+          score.append(sc)
           index_emotion = np.argmax(predict_val)
           class_names= ['angry', 'disgusted', 'fearful', 'happy', 'neutral', 'sad', 'surprised']
-          emotion= class_names[index_emotion] 
-          print(emotion)
-          img= cv2.putText(img, emotion,(x,h), cv2.FONT_HERSHEY_SIMPLEX, 1,(255, 0, 0),3,cv2.LINE_AA)
+          emo= class_names[index_emotion] 
+          emotion.append(emo)
+          img= cv2.putText(img, emo,(x+w,y), cv2.FONT_HERSHEY_SIMPLEX, 1,(255, 0, 0),3,cv2.LINE_AA)
           plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-          plt.show()
-     return img
+     plt.show()
+     return img, score,emotion
 
 # load_data()
 # training()
-# src = cv2.imread(r'C:\Users\hp\Downloads/frt.jpg')
-# face,predict_val = detect_face(src)
+# src = cv2.imread(r'C:\Users\hp\Downloads/sad.jpg')
+# face,score,emotion = detect_face(src)
 # plt.imshow(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
 # plt.axis("off")
 # plt.show()
-
+# print(score,emotion)
 
 #test a video
-from cv2 import VideoCapture, imshow, waitKey, destroyAllWindows
-capture= VideoCapture(0)
-if not capture.isOpened():
-     print("tha camera connection is not established")
-     capture.model
-while capture.isOpened():
-     ret, frame = capture.read()
-     if ret:
-         imshow('displaying establishing connection',frame)
-         _, frame = capture.read()
-         detect_face(frame)
+# from cv2 import VideoCapture, imshow, waitKey, destroyAllWindows
+# capture= VideoCapture(0)
+# if not capture.isOpened():
+#      print("tha camera connection is not established")
+#      capture.model
+# while capture.isOpened():
+#      ret, frame = capture.read()
+#      if ret:
+#          imshow('displaying establishing connection',frame)
+#          _, frame = capture.read()
+#          detect_face(frame)
 
-     if waitKey(25) ==27:
-          break
-capture.release()
-destroyAllWindows()
+#      if waitKey(25) ==27:
+#           break
+# capture.release()
+# destroyAllWindows()
