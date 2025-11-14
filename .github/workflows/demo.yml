@@ -16,7 +16,7 @@ jobs:
         # This env block is REQUIRED by the postgres image
         env:
           POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: 0000
+          POSTGRES_PASSWORD: "0000"
           POSTGRES_DB: testdb
         ports:
           - 5432:5432
