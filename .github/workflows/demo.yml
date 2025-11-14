@@ -46,7 +46,8 @@ jobs:
           done
 
       - name: set test database
-        run: echo "DATABASE_USER=testuser" >> $GITHUB_ENV
+        run: |
+          echo "DATABASE_USER=testuser" >> $GITHUB_ENV
           echo "DATABASE_PASSWORD=0000" >> $GITHUB_ENV
           echo "DATABASE_NAME=testdb" >> $GITHUB_ENV
           echo "DATABASE_HOST=localhost" >> $GITHUB_ENV
