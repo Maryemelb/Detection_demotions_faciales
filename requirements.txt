@@ -12,5 +12,6 @@ python-dotenv
 httpx
 numpy
 pandas
+psycopg2-binary
 
 
