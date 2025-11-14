@@ -15,7 +15,7 @@ jobs:
             env:
               POSTGRES_USER: postgres
               POSTGRES_PASSWORD: 0000
-              POSTGRES_DB: prediction
+              POSTGRES_DB: postgres
             ports:
              - 5432:5432
              # Health checks to ensure PostgreSQL is fully ready
