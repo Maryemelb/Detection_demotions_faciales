@@ -9,4 +9,8 @@ uvicorn
 python-multipart
 sqlalchemy-utils
 python-dotenv
+httpx
+numpy
+pandas
+
 

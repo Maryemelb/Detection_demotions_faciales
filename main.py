@@ -59,6 +59,3 @@ async def predict_emotion(file: UploadFile =File(...), db: Session=Depends(get_d
 def pred(db:Session= Depends(get_db)):
    items= db.query(FileDB).all()
    return items
-
-
-   
