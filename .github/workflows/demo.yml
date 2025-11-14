@@ -46,7 +46,10 @@ jobs:
           done
 
       - name: set test database
-        run: echo "DATABASE_URL=postgresql://testuser:0000@localhost:5432/testdb" >> $GITHUB_ENV
-
+        run: echo "DATABASE_USER=testuser" >> $GITHUB_ENV
+          echo "DATABASE_PASSWORD=0000" >> $GITHUB_ENV
+          echo "DATABASE_NAME=testdb" >> $GITHUB_ENV
+          echo "DATABASE_HOST=localhost" >> $GITHUB_ENV
+          echo "DATABASE_PORT=5432" >> $GITHUB_ENV
       - name: tests execution
         run: pytest -v
