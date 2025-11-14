@@ -10,17 +10,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    # *** CHANGE 1: Set environment variables for the whole job ***
+    # This makes them available to all steps (wait, and test)
+    # and you can delete the "Override environment variables" step.
+    env:
+      DATABASE_USER: testuser
+      DATABASE_PASSWORD: 0000
+      DATABASE_NAME: testdb
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+
     services:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: 0000
-          POSTGRES_DB: testdb
+          POSTGRES_USER: ${{ env.DATABASE_USER }}
+          POSTGRES_PASSWORD: ${{ env.DATABASE_PASSWORD }}
+          POSTGRES_DB: ${{ env.DATABASE_NAME }}
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U testuser"
+          --health-cmd="pg_isready -U ${{ env.DATABASE_USER }}"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -34,25 +44,33 @@ jobs:
         with:
           python-version: "3.10"
 
+      # *** CHANGE 2: Install the psql client ***
+      # We need this for the new wait command.
+      - name: Install PostgreSQL Client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # *** CHANGE 3: Replace the wait script ***
+      # This script uses 'psql' to try and connect with the password.
+      # It will only succeed when the database is fully ready.
       - name: Wait for PostgreSQL
         run: |
-          until pg_isready -h localhost -p 5432 -U testuser; do
-            echo "PostgreSQL is not ready yet..."
+          export PGPASSWORD=${{ env.DATABASE_PASSWORD }}
+          until psql -h ${{ env.DATABASE_HOST }} -U ${{ env.DATABASE_USER }} -d ${{ env.DATABASE_NAME }} -c '\q'; do
+            >&2 echo "Postgres is unavailable - sleeping"
             sleep 1
           done
+          >&2 echo "Postgres is up and running"
 
-      - name: Override environment variables for pytest
-        run: |
-          echo "DATABASE_USER=testuser" >> $GITHUB_ENV
-          echo "DATABASE_PASSWORD=0000" >> $GITHUB_ENV
-          echo "DATABASE_NAME=testdb" >> $GITHUB_ENV
-          echo "DATABASE_HOST=localhost" >> $GITHUB_ENV
-          echo "DATABASE_PORT=5432" >> $GITHUB_ENV
+      # *** CHANGE 4: Delete the "Override" step ***
+      # (This step is no longer needed because of Change 1)
 
       - name: Run tests
+        # The env vars are already set for this step
         run: pytest -v
