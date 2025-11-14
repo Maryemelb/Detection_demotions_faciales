@@ -13,9 +13,9 @@ jobs:
           postgres: 
             image: postgres:16
             env:
-              POSTGRES_USER: postgres
+              POSTGRES_USER: testuser
               POSTGRES_PASSWORD: 0000
-              POSTGRES_DB: postgres
+              POSTGRES_DB: testdb
             ports:
              - 5432:5432
              # Health checks to ensure PostgreSQL is fully ready
@@ -43,7 +43,7 @@ jobs:
                    sleep 1
                    done
             - name: set test database
-              run: echo "DATABASE_URL=postgresql://postgres:0000@localhost:5432/postgres" >> $GITHUB_ENV
+              run: echo "DATABASE_URL=postgresql://testuser:0000@localhost:5432/testdb" >> $GITHUB_ENV
 
             - name: tests execution
               run: pytest -v
