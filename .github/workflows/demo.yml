@@ -45,7 +45,7 @@ jobs:
             sleep 1
           done
 
-      - name: set test database
+      - name: override env for pytest
         run: |
           echo "DATABASE_USER=testuser" >> $GITHUB_ENV
           echo "DATABASE_PASSWORD=0000" >> $GITHUB_ENV
