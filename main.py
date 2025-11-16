@@ -1,5 +1,4 @@
 from fastapi import Depends, FastAPI, UploadFile,File
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from database import Base, engine, session_local
 from models import FileDB
