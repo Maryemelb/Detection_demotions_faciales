@@ -38,11 +38,17 @@ def training():
     color_mode="grayscale",   
     )
     model= tf.keras.Sequential([
-    tf.keras.layers.Conv2D(32,(3,3), activation="relu",input_shape=(48,48,1)),
+    tf.keras.layers.Rescaling(1./255, input_shape=(48,48,1)),
+
+    tf.keras.layers.Conv2D(32,(3,3), activation="relu"),
+    tf.keras.layers.BatchNormalization(),
     tf.keras.layers.MaxPooling2D((2,2)),
+
     tf.keras.layers.Flatten(),
+
     tf.keras.layers.Dense(128, activation="relu"),
     tf.keras.layers.Dropout(0.5),
+
     tf.keras.layers.Dense(7, activation="softmax")
      ])
     model.compile(
@@ -53,7 +59,7 @@ def training():
     early_stop= EarlyStopping(
     monitor='val_loss',
     patience=3,
-    mode=min,
+    mode='min',
     restore_best_weights=True
     )
     checkpoint_callback= keras.callbacks.ModelCheckpoint(
@@ -64,12 +70,12 @@ def training():
     )
     history= model.fit(
     train_data,
-    epochs=1,
+    epochs=10,
     validation_data= test_data,
     callbacks=[checkpoint_callback, early_stop]
     )
-   
     return history
+model= tf.keras.models.load_model('best_model.keras')
 
 def detect_face(img):
      # facecascade= cv2.CascadeClassifier('haarcascadefrontalface_default.xml')
@@ -87,13 +93,13 @@ def detect_face(img):
      #10 → thickness of the rectangle
      emotion=[]
      score=[]
-     model= tf.keras.models.load_model('best_model.keras')
      for (x,y, w, h) in face_rectangle:
           
           cv2.rectangle(img, (x,y), (x + w, y + h), (0,128,0),10)
           image_extraction= gracy_img[y:y+h, x: x+w] #y to y+h / gracy_img(height, width)
           resize_extracted_face= cv2.resize(image_extraction, (48,48))
-          resheapee= np.reshape(resize_extracted_face,(1,48,48,1)) #only one img
+          resheapee = resize_extracted_face.astype("float32")
+          resheapee = np.reshape(resheapee, (1,48,48,1))        
           #32 grayscale images of 48×48 pixels
           print("test")
           predict_val= model.predict(resheapee)
@@ -110,12 +116,12 @@ def detect_face(img):
 
 # load_data()
 # training()
-# src = cv2.imread(r'C:\Users\hp\Downloads/sad.jpg')
-# face,score,emotion = detect_face(src)
-# plt.imshow(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
-# plt.axis("off")
-# plt.show()
-# print(score,emotion)
+src = cv2.imread(r'C:\Users\hp\Downloads/sad.jpg')
+face,score,emotion = detect_face(src)
+plt.imshow(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
+plt.axis("off")
+plt.show()
+print(score,emotion)
 
 #test a video
 # from cv2 import VideoCapture, imshow, waitKey, destroyAllWindows
