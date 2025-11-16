@@ -116,12 +116,12 @@ def detect_face(img):
 
 # load_data()
 # training()
-src = cv2.imread(r'C:\Users\hp\Downloads/sad.jpg')
-face,score,emotion = detect_face(src)
-plt.imshow(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
-plt.axis("off")
-plt.show()
-print(score,emotion)
+# src = cv2.imread(r'C:\Users\hp\Downloads/sad.jpg')
+# face,score,emotion = detect_face(src)
+# plt.imshow(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
+# plt.axis("off")
+# plt.show()
+# print(score,emotion)
 
 #test a video
 # from cv2 import VideoCapture, imshow, waitKey, destroyAllWindows

@@ -4,7 +4,6 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from pipeline.detect_and_predict import training
 from main import predict_emotion
-import cv2
 from fastapi.testclient import TestClient
 from main import app
 from database import session_local
